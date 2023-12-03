@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+"use client"
+import React, { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
-function App() {
+import CheckoutForm from "./CheckoutForm";
+import "./App.css";
+
+// Make sure to call loadStripe outside of a component’s render to avoid
+// recreating the Stripe object on every render.
+// This is your test publishable API key.
+const stripePromise = loadStripe("pk_test_51NYpT8SBmdZWwSx48Kf7BohBDAj9pVVkylgODgxXYtjiTLQWgbCfMtbmXI3InImOJFAGw5gp6UYRJKFor02BZHBG00wEpr6RpX");
+
+export default function App() {
+  const [clientSecret, setClientSecret] = useState("");
+
+  useEffect(() => {
+
+
+
+    // Create PaymentIntent as soon as the page loads
+    fetch("http://localhost:3001/api/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: 'xyz', skuId: 'abc', size: 'large', quantity: 5, amount: 1000 }),
+    })
+      .then((res) => res.json())
+      .then((data) => setClientSecret(data.clientSecret));
+  }, []);
+
+  const appearance = {
+    theme: 'stripe',
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {clientSecret && (
+        <Elements options={options} stripe={stripePromise}>
+          <CheckoutForm />
+        </Elements>
+      )}
     </div>
   );
 }
-
-export default App;
