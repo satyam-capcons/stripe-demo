@@ -19,7 +19,7 @@ export default function App() {
 
 
     // Create PaymentIntent as soon as the page loads
-    fetch(" https://b3aa-2401-4900-6281-644f-9957-fd98-1a42-24a8.ngrok-free.app/api/create-payment-intent", {
+    fetch("https://b3aa-2401-4900-6281-644f-9957-fd98-1a42-24a8.ngrok-free.app/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productId: 'xyz', skuId: 'abc', size: 'large', quantity: 5, amount: 1000 }),
